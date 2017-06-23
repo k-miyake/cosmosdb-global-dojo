@@ -83,23 +83,12 @@
         public static void Initialize()
         {
             // 読み取りエンドポイント優先順位
-            ConnectionPolicy cp = new ConnectionPolicy();
+            ConnectionPolicy cp = new ConnectionPolicy {
+                ConnectionMode = ConnectionMode.Direct,
+                ConnectionProtocol = Protocol.Tcp
+            };
 
-            switch (ConfigurationManager.AppSettings["appRegion"])
-            {
-                case "japanwest":
-                    cp.PreferredLocations.Add(LocationNames.JapanWest);
-                    cp.PreferredLocations.Add(LocationNames.JapanEast);
-                    cp.PreferredLocations.Add(LocationNames.EastUS2);
-                    break;
-                case "eastus2":
-                    cp.PreferredLocations.Add(LocationNames.EastUS2);
-                    cp.PreferredLocations.Add(LocationNames.JapanWest);
-                    cp.PreferredLocations.Add(LocationNames.JapanEast);
-                    break;
-            }
-
-            cp.EnableEndpointDiscovery = true;
+            cp.PreferredLocations.Add(ConfigurationManager.AppSettings["appRegion"]);
 
             // 書き込みエンドポイント
             client = new DocumentClient(
