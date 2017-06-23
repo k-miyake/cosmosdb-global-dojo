@@ -4,12 +4,14 @@
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using Models;
+    using System.Configuration;
 
     public class ItemController : Controller
     {
         [ActionName("Index")]
         public async Task<ActionResult> IndexAsync()
         {
+            ViewBag.AppRegion = ConfigurationManager.AppSettings["appRegion"];
             ViewBag.ReadEndPoint = DocumentDBRepository<Item>.GetReadEndpoint();
             ViewBag.WriteEndPoint = DocumentDBRepository<Item>.GetWriteEndpoint();
 

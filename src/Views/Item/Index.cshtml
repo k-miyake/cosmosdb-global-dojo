@@ -5,15 +5,15 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>List of To-Do Items</h2>
+<h2>List of To-Do Items <small><span class="label label-info">@ViewBag.AppRegion</span></small></h2>
 
 <div class="alrert alert-warning" style="padding: 10px 0 5px 0; margin-bottom: 5px;">
   <ul>
     <li>
-      <p>書き込みリージョン: @ViewBag.WriteEndPoint</p>
+      <p>書き込みリージョン: <strong>@ViewBag.WriteEndPoint</strong></p>
     </li>
     <li>
-      <p>読み取りリージョン: @ViewBag.ReadEndPoint</p>
+      <p>読み取りリージョン: <strong>@ViewBag.ReadEndPoint</strong></p>
     </li>
   </ul>
 </div>

@@ -85,7 +85,10 @@
             // 接続ポリシーの作成
             ConnectionPolicy cp = new ConnectionPolicy {
                 ConnectionMode = ConnectionMode.Direct,
+#if RELEASE
                 ConnectionProtocol = Protocol.Tcp
+#endif
+          
             };
 
             // このインスタンスのリージョンを追加
