@@ -82,15 +82,19 @@
 
         public static void Initialize()
         {
-            // 読み取りエンドポイント優先順位
+            // 接続ポリシーの作成
             ConnectionPolicy cp = new ConnectionPolicy {
                 ConnectionMode = ConnectionMode.Direct,
                 ConnectionProtocol = Protocol.Tcp
             };
 
+            // このインスタンスのリージョンを追加
             cp.PreferredLocations.Add(ConfigurationManager.AppSettings["appRegion"]);
 
-            // 書き込みエンドポイント
+            // その他のリージョンを追加
+            cp = AddPreferredLocations(cp).Result;
+
+            // クライアントの生成
             client = new DocumentClient(
                 new Uri(ConfigurationManager.AppSettings["endpoint"]), // エンドポイント
                 ConfigurationManager.AppSettings["authKey"],
@@ -101,8 +105,27 @@
 
             CreateDatabaseIfNotExistsAsync().Wait();
             CreateCollectionIfNotExistsAsync().Wait();
+        }
 
-            
+        // 利用可能リージョンを追加
+        private static async Task<ConnectionPolicy> AddPreferredLocations(ConnectionPolicy cp)
+        {
+            var preClient = new DocumentClient(
+                new Uri(ConfigurationManager.AppSettings["endpoint"]),
+                ConfigurationManager.AppSettings["authKey"]
+            );
+            DatabaseAccount db = await preClient.GetDatabaseAccountAsync();
+            var locations = db.ReadableLocations;
+
+            foreach(var l in locations)
+            {
+                if(l.Name != ConfigurationManager.AppSettings["appRegion"])
+                {
+                    cp.PreferredLocations.Add(l.Name);
+                }
+            }
+            preClient.Dispose();
+            return cp;
         }
 
         private static async Task CreateDatabaseIfNotExistsAsync()
